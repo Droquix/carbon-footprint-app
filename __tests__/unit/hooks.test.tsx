@@ -101,4 +101,49 @@ describe("useInsights Hook", () => {
     expect(result.current.totalWeeklyCO2).toBeCloseTo(17);
     expect(result.current.highestImpactCategory).toBe("transport");
   });
+
+  it("handles energy emissions as the highest impact category", () => {
+    const now = Date.now();
+    const mockActivities: Activity[] = [
+      { id: "1", type: "electricity", amount: 100, timestamp: now - 1000 },
+    ];
+    const { result } = renderHook(() => useInsights(mockActivities));
+    expect(result.current.highestImpactCategory).toBe("energy");
+    expect(result.current.topRecommendation).toMatch(
+      /Improve energy efficiency/i
+    );
+  });
+
+  it("handles shopping emissions as the highest impact category", () => {
+    const now = Date.now();
+    const mockActivities: Activity[] = [
+      { id: "1", type: "clothing", amount: 10, timestamp: now - 1000 },
+    ];
+    const { result } = renderHook(() => useInsights(mockActivities));
+    expect(result.current.highestImpactCategory).toBe("shopping");
+    expect(result.current.topRecommendation).toMatch(
+      /Opt for second-hand clothing/i
+    );
+  });
+
+  it("calculates comparison correctly when user matches the Indian average", () => {
+    const now = Date.now();
+    // Indian average is 1900 kg/year.
+    // Over 52 weeks, this is 1900 / 52 = 36.5384615 kg/week.
+    // Let's create an activity that yields exactly 1900 / 52 kg CO2.
+    // Beef emissions is 59.6 kg CO2 per kg of beef.
+    // So amount of beef to consume = (1900 / 52) / 59.6.
+    const weeklyTarget = 1900 / 52;
+    const beefAmount = weeklyTarget / 59.6;
+    const mockActivities: Activity[] = [
+      { id: "1", type: "beef", amount: beefAmount, timestamp: now - 1000 },
+    ];
+    const { result } = renderHook(() => useInsights(mockActivities));
+    expect(
+      result.current.comparisonToIndianAverage.differencePercentage
+    ).toBeCloseTo(0, 5);
+    expect(result.current.comparisonToIndianAverage.comparisonText).toMatch(
+      /0\.0% lower|0\.0% higher/i
+    );
+  });
 });
