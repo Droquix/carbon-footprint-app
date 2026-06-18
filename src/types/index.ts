@@ -41,3 +41,76 @@ export interface EmissionsData {
   energy: EnergyFactors;
   shopping: ShoppingFactors;
 }
+
+export interface CategorySelectorProps {
+  category: "transport" | "food" | "energy" | "shopping";
+  onSelectCategory: (
+    category: "transport" | "food" | "energy" | "shopping"
+  ) => void;
+}
+
+export interface ActivityTypeSelectorProps {
+  activityType: string;
+  onChangeActivityType: (type: string) => void;
+  typesOptions: { value: string; label: string }[];
+}
+
+export interface QuantityInputProps {
+  amountInput: string;
+  onChangeAmountInput: (amount: string) => void;
+  unitLabel: string;
+}
+
+export interface ActivityFormProps {
+  onLogActivity: (type: string, amount: number) => void;
+}
+
+export interface AverageComparisonProps {
+  totalWeeklyCO2: number;
+  statusLabel: string;
+  statusTextDesc: string;
+  barColorClass: string;
+  textColorClass: string;
+  ratingLabelText: string;
+  indianWeeklyAverageKg: number;
+  percentageOfAverage: number;
+}
+
+export interface RecommendationCardProps {
+  headline: string;
+  saving: string;
+  topRecommendation: string;
+}
+
+export interface InsightsCardProps {
+  insights: {
+    totalWeeklyCO2: number;
+    highestImpactCategory:
+      | "transport"
+      | "food"
+      | "energy"
+      | "shopping"
+      | "none";
+    topRecommendation: string;
+    comparisonToIndianAverage: {
+      userAnnualEstimateKg: number;
+      indianAverageAnnualKg: number;
+      differencePercentage: number;
+      comparisonText: string;
+    };
+  };
+}
+
+export interface HistoryEntryProps {
+  activity: Activity;
+  categoryLabel: string;
+  co2: number;
+  impactPill: { classes: string; label: string };
+  typeLabel: string;
+  unit: string;
+}
+
+export interface HistoryListProps {
+  activities: Activity[];
+  onClearActivities: () => void;
+}

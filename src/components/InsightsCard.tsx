@@ -1,165 +1,44 @@
-import { useState, useEffect } from "react";
-import type { InsightsResult } from "../hooks/useInsights";
-import {
-  COUNTUP_DURATION_MS,
-  COUNTUP_INTERVAL_MS,
-  INDIAN_WEEKLY_AVERAGE_KG,
-} from "../constants/calculationConstants";
-import {
-  getComparisonDetails,
-  getRecommendationDetails,
-} from "../lib/insightUtils";
+import { INDIAN_WEEKLY_AVERAGE_KG } from "../constants/calculationConstants";
+import { useCountUp } from "../hooks/useCountUp";
+// prettier-ignore
+import { getComparisonDetails, getRecommendationDetails } from "../lib/insightUtils";
+import type { InsightsCardProps } from "../types";
+import { AverageComparison } from "./AverageComparison";
+import { RecommendationCard } from "./RecommendationCard";
 
-interface InsightsCardProps {
-  insights: InsightsResult;
-}
+// prettier-ignore
+const contributors: Record<string, string> = { transport: "🚗 Transport", food: "🥗 Food", energy: "🔌 Energy", shopping: "🛍️ Shopping", none: "" };
 
 /**
  * InsightsCard component to present carbon footprint calculations, statistics,
  * comparison metrics, and a dynamic recommendation card.
- *
- * @param props Component properties.
- * @param props.insights Computed insights data object.
- * @returns The rendered React element.
  */
+// prettier-ignore
 export function InsightsCard({ insights }: InsightsCardProps) {
   const { totalWeeklyCO2, highestImpactCategory, topRecommendation } = insights;
-
-  const [displayCO2, setDisplayCO2] = useState(0);
-
-  // Count-up animation on load/update
-  useEffect(() => {
-    let start = 0;
-    const end = totalWeeklyCO2;
-    if (end === 0) {
-      setDisplayCO2(0);
-      return;
-    }
-
-    const duration = COUNTUP_DURATION_MS; // 800ms
-    const incrementTime = COUNTUP_INTERVAL_MS; // 25ms interval
-    const steps = duration / incrementTime;
-    const stepValue = end / steps;
-
-    const timer = setInterval(() => {
-      start += stepValue;
-      if (start >= end) {
-        clearInterval(timer);
-        setDisplayCO2(end);
-      } else {
-        setDisplayCO2(start);
-      }
-    }, incrementTime);
-
-    return () => clearInterval(timer);
-  }, [totalWeeklyCO2]);
-
-  const indianWeeklyAverageKg = INDIAN_WEEKLY_AVERAGE_KG; // 1900 kg / 52 weeks
-  const {
-    percentageOfAverage,
-    statusLabel,
-    statusTextDesc,
-    barColorClass,
-    textColorClass,
-    ratingLabelText,
-  } = getComparisonDetails(totalWeeklyCO2);
-
+  const displayCO2 = useCountUp(totalWeeklyCO2);
+  const comparison = getComparisonDetails(totalWeeklyCO2);
   const rec = getRecommendationDetails(highestImpactCategory);
 
   return (
     <section className="bg-slate-900/40 backdrop-blur-xl border border-emerald-900/10 rounded-3xl p-6 shadow-2xl transition-all duration-300 hover:border-emerald-500/20 flex flex-col justify-between h-full">
       <div>
-        <h2 className="text-xl font-bold text-slate-100 mb-6 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent tracking-tight">
-          Weekly Insights
-        </h2>
-
-        {/* Big Monospace animated weekly number */}
+        <h2 className="text-xl font-bold text-slate-100 mb-6 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent tracking-tight">Weekly Insights</h2>
         <div className="bg-slate-950/40 border border-slate-850 rounded-2xl p-5 mb-5 text-center">
-          <span className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
-            Weekly Carbon Footprint
-          </span>
+          <span className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Weekly Carbon Footprint</span>
           <p className="text-4xl font-extrabold text-white font-mono">
-            {displayCO2.toFixed(2)}{" "}
-            <span className="text-lg font-medium text-slate-400 font-sans">
-              kg CO2e
-            </span>
+            {displayCO2.toFixed(2)} <span className="text-lg font-medium text-slate-400 font-sans">kg CO2e</span>
           </p>
           {highestImpactCategory !== "none" && (
             <div className="mt-3 pt-3 border-t border-slate-900/60 flex justify-between items-center text-xs">
-              <span className="text-slate-400 font-semibold">
-                Highest Contributor:
-              </span>
-              <span className="font-bold text-slate-300">
-                {highestImpactCategory === "transport" && "🚗 Transport"}
-                {highestImpactCategory === "food" && "🥗 Food"}
-                {highestImpactCategory === "energy" && "🔌 Energy"}
-                {highestImpactCategory === "shopping" && "🛍️ Shopping"}
-              </span>
+              <span className="text-slate-400 font-semibold">Highest Contributor:</span>
+              <span className="font-bold text-slate-300">{contributors[highestImpactCategory]}</span>
             </div>
           )}
         </div>
-
-        {/* Progress bar comparison */}
-        <div className="bg-slate-950/40 border border-slate-850 rounded-2xl p-5 mb-5">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Indian Average Comparison
-            </span>
-            {totalWeeklyCO2 > 0 && (
-              <span className={`text-xs font-bold ${textColorClass}`}>
-                {statusLabel}
-              </span>
-            )}
-          </div>
-
-          {totalWeeklyCO2 === 0 ? (
-            <p className="text-slate-400 text-xs py-1">{ratingLabelText}</p>
-          ) : (
-            <div className="space-y-3">
-              {/* Progress bar with color gradient track */}
-              <div className="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden">
-                <div
-                  className={`h-full ${barColorClass} transition-all duration-500`}
-                  style={{ width: `${Math.min(100, percentageOfAverage)}%` }}
-                ></div>
-              </div>
-
-              {/* Informative text label alongside visual color */}
-              <p className="text-xs text-slate-300 font-semibold">
-                {ratingLabelText}
-              </p>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                {statusTextDesc} Weekly national average baseline:{" "}
-                <span className="font-mono">
-                  {indianWeeklyAverageKg.toFixed(2)} kg
-                </span>{" "}
-                (1.9 tons/year).
-              </p>
-            </div>
-          )}
-        </div>
+        <AverageComparison totalWeeklyCO2={totalWeeklyCO2} indianWeeklyAverageKg={INDIAN_WEEKLY_AVERAGE_KG} {...comparison} />
       </div>
-
-      {/* Structured Single Action Recommendation Card */}
-      <div className="bg-slate-950/40 border border-slate-850 rounded-2xl p-5 mt-2">
-        <span className="block text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-1">
-          Target Action
-        </span>
-        <h3 className="text-base font-bold text-slate-200 mb-2">
-          {rec.headline}
-        </h3>
-        <div className="flex items-center justify-between gap-3 bg-emerald-950/10 border border-emerald-900/10 rounded-xl p-3 mb-3">
-          <span className="text-xs text-slate-400 font-semibold">
-            Potential Saving
-          </span>
-          <span className="text-sm font-bold text-emerald-400 font-mono">
-            ~{rec.saving} CO2e
-          </span>
-        </div>
-        <p className="text-xs text-slate-400 leading-relaxed font-medium">
-          {topRecommendation}
-        </p>
-      </div>
+      <RecommendationCard headline={rec.headline} saving={rec.saving} topRecommendation={topRecommendation} />
     </section>
   );
 }

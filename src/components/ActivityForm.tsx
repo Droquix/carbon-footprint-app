@@ -1,279 +1,46 @@
 import { useState, useMemo } from "react";
-import {
-  getDefaultTypeForCategory,
-  validateActivityInput,
-} from "../lib/formUtils";
-import { MIN_BUTTON_HEIGHT } from "../constants/uiConstants";
-
-interface ActivityFormProps {
-  onLogActivity: (type: string, amount: number) => void;
-}
+import type { ActivityFormProps } from "../types";
+import { CategorySelector } from "./CategorySelector";
+import { ActivityTypeSelector } from "./ActivityTypeSelector";
+import { QuantityInput } from "./QuantityInput";
+import { HiddenCategorySelect } from "./HiddenCategorySelect";
+import { getUnit } from "../lib/displayUtils";
+// prettier-ignore
+import { getDefaultTypeForCategory, validateActivityInput, getTypesOptionsForCategory } from "../lib/formUtils";
 
 /**
  * ActivityForm component for logging carbon footprint activities.
- *
- * @param props The component props.
- * @param props.onLogActivity Callback function to log a validated activity.
- * @returns The rendered React element.
  */
+// prettier-ignore
 export function ActivityForm({ onLogActivity }: ActivityFormProps) {
-  const [category, setCategory] = useState<
-    "transport" | "food" | "energy" | "shopping"
-  >("transport");
+  const [category, setCategory] = useState<"transport" | "food" | "energy" | "shopping">("transport");
   const [activityType, setActivityType] = useState<string>("car");
   const [amountInput, setAmountInput] = useState<string>("");
+  const typesOptions = useMemo(() => getTypesOptionsForCategory(category), [category]);
 
-  // Get types available under each category
-  const typesOptions = useMemo(() => {
-    switch (category) {
-      case "transport":
-        return [
-          { value: "car", label: "Car (km)" },
-          { value: "bus", label: "Bus (km)" },
-          { value: "flight", label: "Flight (km)" },
-          { value: "bike", label: "Bike (km) (Zero Carbon)" },
-        ];
-      case "food":
-        return [
-          { value: "beef", label: "Beef (kg)" },
-          { value: "chicken", label: "Chicken (kg)" },
-          { value: "vegetables", label: "Vegetables (kg)" },
-          { value: "dairy", label: "Dairy (Cheese) (kg)" },
-        ];
-      case "energy":
-        return [
-          { value: "electricity", label: "Electricity (kWh)" },
-          { value: "naturalGas", label: "Natural Gas (m³)" },
-        ];
-      case "shopping":
-        return [
-          { value: "clothing", label: "Clothing (items)" },
-          { value: "electronics", label: "Electronics (laptops)" },
-        ];
-      default:
-        return [];
-    }
-  }, [category]);
-
-  /**
-   * Helper function to determine the label of the measurement unit based on the selected activity.
-   *
-   * @returns A string representing the unit (e.g., "km", "kg", "kWh", "m³", or "item(s)").
-   */
-  const getUnitLabel = () => {
-    if (category === "transport") return "km";
-    if (category === "food") return "kg";
-    if (activityType === "electricity") return "kWh";
-    if (activityType === "naturalGas") return "m³";
-    return "item(s)";
-  };
-
-  /**
-   * Selects a category and defaults the activity type.
-   *
-   * @param nextCat The category to switch to ("transport", "food", "energy", or "shopping").
-   * @returns void
-   */
-  const selectCategory = (
-    nextCat: "transport" | "food" | "energy" | "shopping"
-  ) => {
-    setCategory(nextCat);
-    const defaultType = getDefaultTypeForCategory(nextCat);
-    setActivityType(defaultType);
-  };
-
-  /**
-   * Handles changes to the category selection dropdown.
-   *
-   * @param e The change event from the category select element.
-   * @returns void
-   */
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    selectCategory(
-      e.target.value as "transport" | "food" | "energy" | "shopping"
-    );
-  };
-
-  /**
-   * Validates input values and submits the new activity if validation passes.
-   *
-   * @param e The form submit event.
-   * @returns void
-   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const validation = validateActivityInput(
-      category,
-      activityType,
-      amountInput
-    );
-    if (!validation.isValid) {
-      alert(validation.error);
-      return;
-    }
+    const val = validateActivityInput(category, activityType, amountInput);
+    if (!val.isValid) return alert(val.error);
+    onLogActivity(activityType, val.sanitizedAmount);
+    setAmountInput("");
+  };
 
-    onLogActivity(activityType, validation.sanitizedAmount);
-    setAmountInput(""); // Clear amount input
+  const handleSelectCategory = (cat: typeof category) => {
+    setCategory(cat);
+    setActivityType(getDefaultTypeForCategory(cat));
   };
 
   return (
     <section className="bg-slate-900/40 backdrop-blur-xl border border-emerald-900/10 rounded-3xl p-6 shadow-2xl transition-all duration-300 hover:border-emerald-500/20 flex flex-col justify-between h-full">
       <div>
-        <h2 className="text-xl font-bold text-slate-100 mb-6 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent tracking-tight">
-          Log Activity
-        </h2>
-
-        {/* Screen Reader Only select element for backwards compatibility and test suites */}
-        <div className="sr-only">
-          <label htmlFor="category-select">Category</label>
-          <select
-            id="category-select"
-            value={category}
-            onChange={handleCategoryChange}
-          >
-            <option value="transport">🚗 Transport</option>
-            <option value="food">🥗 Food</option>
-            <option value="energy">🔌 Energy</option>
-            <option value="shopping">🛍️ Shopping</option>
-          </select>
-        </div>
-
+        <h2 className="text-xl font-bold text-slate-100 mb-6 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent tracking-tight">Log Activity</h2>
+        <HiddenCategorySelect category={category} onSelectCategory={handleSelectCategory} />
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Card Category Selectors */}
-          <div>
-            <span className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-              Select Category
-            </span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <button
-                type="button"
-                onClick={() => selectCategory("transport")}
-                className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-200 min-h-[76px] ${
-                  category === "transport"
-                    ? "bg-emerald-950/20 border-emerald-500 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.15)] scale-[1.03]"
-                    : "bg-slate-950/40 border-slate-850 hover:border-slate-700 text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <span
-                  className="text-2xl mb-1"
-                  role="img"
-                  aria-label="Transport"
-                >
-                  🚗
-                </span>
-                <span className="text-xs font-semibold">Transport</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => selectCategory("food")}
-                className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-200 min-h-[76px] ${
-                  category === "food"
-                    ? "bg-emerald-950/20 border-emerald-500 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.15)] scale-[1.03]"
-                    : "bg-slate-950/40 border-slate-850 hover:border-slate-700 text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <span className="text-2xl mb-1" role="img" aria-label="Food">
-                  🥗
-                </span>
-                <span className="text-xs font-semibold">Food</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => selectCategory("energy")}
-                className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-200 min-h-[76px] ${
-                  category === "energy"
-                    ? "bg-emerald-950/20 border-emerald-500 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.15)] scale-[1.03]"
-                    : "bg-slate-950/40 border-slate-850 hover:border-slate-700 text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <span className="text-2xl mb-1" role="img" aria-label="Energy">
-                  🔌
-                </span>
-                <span className="text-xs font-semibold">Energy</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => selectCategory("shopping")}
-                className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-200 min-h-[76px] ${
-                  category === "shopping"
-                    ? "bg-emerald-950/20 border-emerald-500 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.15)] scale-[1.03]"
-                    : "bg-slate-950/40 border-slate-850 hover:border-slate-700 text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <span
-                  className="text-2xl mb-1"
-                  role="img"
-                  aria-label="Shopping"
-                >
-                  🛍️
-                </span>
-                <span className="text-xs font-semibold">Shopping</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Activity Type Selector */}
-          <div>
-            <label
-              htmlFor="type-select"
-              className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2"
-            >
-              Activity Type
-            </label>
-            <select
-              id="type-select"
-              value={activityType}
-              onChange={(e) => setActivityType(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 cursor-pointer"
-              style={{ minHeight: MIN_BUTTON_HEIGHT }}
-            >
-              {typesOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Input Quantity with attached unit badge */}
-          <div>
-            <label
-              htmlFor="amount-input"
-              className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2"
-            >
-              Quantity / Amount
-            </label>
-            <div className="relative flex items-stretch w-full">
-              <input
-                id="amount-input"
-                type="number"
-                step="any"
-                value={amountInput}
-                onChange={(e) => setAmountInput(e.target.value)}
-                placeholder="e.g. 15.5"
-                className="flex-grow bg-slate-950 border border-slate-800 border-r-0 rounded-l-xl px-4 py-3 text-slate-200 placeholder-slate-600 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
-                style={{ minHeight: MIN_BUTTON_HEIGHT }}
-                required
-              />
-              <span
-                className="inline-flex items-center px-4 rounded-r-xl border border-l-0 border-slate-800 bg-slate-900 text-xs font-bold text-slate-400"
-                style={{ minHeight: MIN_BUTTON_HEIGHT }}
-              >
-                {getUnitLabel()}
-              </span>
-            </div>
-          </div>
-
-          {/* CTA Log Activity Button */}
-          <button
-            type="submit"
-            className="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/25 active:scale-[0.98] transition-all duration-200 min-h-[48px]"
-          >
-            Log Activity
-          </button>
+          <CategorySelector category={category} onSelectCategory={handleSelectCategory} />
+          <ActivityTypeSelector activityType={activityType} onChangeActivityType={setActivityType} typesOptions={typesOptions} />
+          <QuantityInput amountInput={amountInput} onChangeAmountInput={setAmountInput} unitLabel={getUnit(activityType)} />
+          <button type="submit" className="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/25 active:scale-[0.98] transition-all duration-200 min-h-[48px]">Log Activity</button>
         </form>
       </div>
     </section>

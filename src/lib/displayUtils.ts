@@ -2,6 +2,19 @@ import {
   LOW_IMPACT_THRESHOLD,
   MEDIUM_IMPACT_THRESHOLD,
 } from "../constants/calculationConstants";
+import type { Activity } from "../types";
+import {
+  calculateTransportEmissions,
+  calculateFoodEmissions,
+  calculateEnergyEmissions,
+  calculateShoppingEmissions,
+} from "./emissions";
+import {
+  isValidTransportType,
+  isValidFoodType,
+  isValidEnergyType,
+  isValidShoppingType,
+} from "./validators";
 
 /**
  * Maps an activity type identifier to its human-readable label.
@@ -81,4 +94,34 @@ export function getImpactPill(co2: number): {
       label: "High Impact",
     };
   }
+}
+
+/**
+ * Resolves the activity category, display label, and calculated CO2 emissions.
+ *
+ * @param act The activity object.
+ * @returns An object with category name, label, and calculated CO2 emissions.
+ */
+export function getCategoryAndEmissions(act: Activity): {
+  category: string;
+  label: string;
+  co2: number;
+} {
+  if (isValidTransportType(act.type)) {
+    const co2 = calculateTransportEmissions(act.type, act.amount);
+    return { category: "Transport", label: "🚗 Transport", co2 };
+  }
+  if (isValidFoodType(act.type)) {
+    const co2 = calculateFoodEmissions(act.type, act.amount);
+    return { category: "Food", label: "🥗 Food", co2 };
+  }
+  if (isValidEnergyType(act.type)) {
+    const co2 = calculateEnergyEmissions(act.type, act.amount);
+    return { category: "Energy", label: "🔌 Energy", co2 };
+  }
+  if (isValidShoppingType(act.type)) {
+    const co2 = calculateShoppingEmissions(act.type, act.amount);
+    return { category: "Shopping", label: "🛍️ Shopping", co2 };
+  }
+  return { category: "Unknown", label: "❓ Other", co2: 0 };
 }

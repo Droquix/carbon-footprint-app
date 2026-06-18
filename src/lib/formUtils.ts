@@ -72,3 +72,42 @@ export function validateActivityInput(
 
   return { isValid: true, sanitizedAmount };
 }
+
+/**
+ * Resolves the activity options available for selection under a given category.
+ *
+ * @param category The selected category name.
+ * @returns Array of options containing label and value.
+ */
+export function getTypesOptionsForCategory(
+  category: "transport" | "food" | "energy" | "shopping"
+): { value: string; label: string }[] {
+  switch (category) {
+    case "transport":
+      return [
+        { value: "car", label: "Car (km)" },
+        { value: "bus", label: "Bus (km)" },
+        { value: "flight", label: "Flight (km)" },
+        { value: "bike", label: "Bike (km) (Zero Carbon)" },
+      ];
+    case "food":
+      return [
+        { value: "beef", label: "Beef (kg)" },
+        { value: "chicken", label: "Chicken (kg)" },
+        { value: "vegetables", label: "Vegetables (kg)" },
+        { value: "dairy", label: "Dairy (Cheese) (kg)" },
+      ];
+    case "energy":
+      return [
+        { value: "electricity", label: "Electricity (kWh)" },
+        { value: "naturalGas", label: "Natural Gas (m³)" },
+      ];
+    case "shopping":
+      return [
+        { value: "clothing", label: "Clothing (items)" },
+        { value: "electronics", label: "Electronics (laptops)" },
+      ];
+    default:
+      return [];
+  }
+}
