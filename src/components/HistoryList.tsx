@@ -20,7 +20,7 @@ export function HistoryList({ activities, onClearActivities }: HistoryListProps)
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-slate-100 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent tracking-tight">Activity History</h2>
           {activities.length > 0 && (
-            <button onClick={onClearActivities} aria-label="Clear all activity history" className="text-xs font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/15 border border-rose-500/20 px-3 py-1.5 rounded-xl transition-all duration-200 min-h-[32px]">Clear All</button>
+            <button onClick={onClearActivities} aria-label="Clear all activity history" className="text-xs font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/15 border border-rose-500/20 px-3 py-1.5 rounded-xl transition-all duration-200 min-h-[32px] focus:outline-none focus:ring-2 focus:ring-rose-500/40">Clear All</button>
           )}
         </div>
         {sorted.length === 0 ? (
@@ -31,14 +31,14 @@ export function HistoryList({ activities, onClearActivities }: HistoryListProps)
         ) : (
           <div className="relative pl-6 overflow-y-auto pr-1 custom-scrollbar" style={{ maxHeight: HISTORY_MAX_HEIGHT }}>
             <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-slate-800" />
-            <div className="space-y-6">
+            <ul className="space-y-6">
               {sorted.map((act) => {
                 const { label, co2 } = getCategoryAndEmissions(act);
                 return (
                   <HistoryEntry key={act.id} activity={act} categoryLabel={label} co2={co2} impactPill={getImpactPill(co2)} typeLabel={getActivityTypeLabel(act.type)} unit={getUnit(act.type)} />
                 );
               })}
-            </div>
+            </ul>
           </div>
         )}
       </div>

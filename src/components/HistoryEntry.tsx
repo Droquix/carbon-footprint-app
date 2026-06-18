@@ -6,7 +6,7 @@ import type { HistoryEntryProps } from "../types";
 // prettier-ignore
 export function HistoryEntry({ activity, categoryLabel, co2, impactPill, typeLabel, unit }: HistoryEntryProps) {
   return (
-    <div className="relative flex items-center justify-between gap-4">
+    <li className="relative flex items-center justify-between gap-4">
       {/* Timeline Node dot with emoji inside */}
       <div className="absolute -left-[24px] w-6 h-6 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-xs shadow-md z-10" aria-hidden="true">
         {categoryLabel.split(" ")[0]}
@@ -31,6 +31,6 @@ export function HistoryEntry({ activity, categoryLabel, co2, impactPill, typeLab
           <span>{co2.toFixed(2)} kg</span> <span className="opacity-90">({impactPill.label})</span>
         </span>
       </div>
-    </div>
+    </li>
   );
 }

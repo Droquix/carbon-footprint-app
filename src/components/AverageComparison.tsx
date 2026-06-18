@@ -17,7 +17,14 @@ export function AverageComparison({ totalWeeklyCO2, statusLabel, statusTextDesc,
         <p className="text-slate-400 text-xs py-1">{ratingLabelText}</p>
       ) : (
         <div className="space-y-3">
-          <div className="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden">
+          <div
+            className="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden"
+            role="progressbar"
+            aria-valuenow={Math.round(percentageOfAverage)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Carbon footprint percentage of national average"
+          >
             <div className={`h-full ${barColorClass} transition-all duration-500`} style={{ width: `${Math.min(100, percentageOfAverage)}%` }} />
           </div>
           <p className="text-xs text-slate-300 font-semibold">{ratingLabelText}</p>

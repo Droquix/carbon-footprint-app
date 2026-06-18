@@ -56,6 +56,7 @@ function App() {
               href="https://github.com/vitejs/vite"
               target="_blank"
               rel="noreferrer"
+              aria-label="Docs (opens in a new tab)"
               className="text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors"
             >
               Docs
@@ -87,10 +88,14 @@ function App() {
           {/* Circular CO2 Gauge / Meter */}
           <div
             className="flex items-center gap-5 bg-slate-950/40 border border-slate-900 rounded-2xl p-4 shadow-inner min-w-[240px] justify-center"
+            role="img"
             aria-label="Weekly carbon footprint progress gauge"
           >
             <div className="relative w-24 h-24 flex items-center justify-center">
-              <svg className="w-full h-full transform -rotate-90">
+              <svg
+                className="w-full h-full transform -rotate-90"
+                aria-hidden="true"
+              >
                 {/* Track circle */}
                 <circle
                   cx="48"

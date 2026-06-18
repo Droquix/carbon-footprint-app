@@ -15,7 +15,9 @@ describe("formUtils", () => {
     });
 
     it("should return empty string for invalid category", () => {
-      expect(getDefaultTypeForCategory("unknown" as any)).toBe("");
+      expect(
+        getDefaultTypeForCategory("unknown" as unknown as "transport")
+      ).toBe("");
     });
   });
 
@@ -66,7 +68,9 @@ describe("formUtils", () => {
     });
 
     it("should return empty array for invalid category", () => {
-      expect(getTypesOptionsForCategory("unknown" as any)).toEqual([]);
+      expect(
+        getTypesOptionsForCategory("unknown" as unknown as "transport")
+      ).toEqual([]);
     });
   });
 });

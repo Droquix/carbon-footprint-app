@@ -26,11 +26,13 @@ export function QuantityInput({
           value={amountInput}
           onChange={(e) => onChangeAmountInput(e.target.value)}
           placeholder="e.g. 15.5"
+          aria-describedby="unit-badge"
           className="flex-grow bg-slate-950 border border-slate-800 border-r-0 rounded-l-xl px-4 py-3 text-slate-200 placeholder-slate-600 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
           style={{ minHeight: MIN_BUTTON_HEIGHT }}
           required
         />
         <span
+          id="unit-badge"
           className="inline-flex items-center px-4 rounded-r-xl border border-l-0 border-slate-800 bg-slate-900 text-xs font-bold text-slate-400"
           style={{ minHeight: MIN_BUTTON_HEIGHT }}
         >
