@@ -19,14 +19,36 @@ describe("HistoryList Component", () => {
       { id: "6", type: "chicken", amount: 2, timestamp: Date.now() - 6000 },
       { id: "7", type: "vegetables", amount: 3, timestamp: Date.now() - 7000 },
       { id: "8", type: "dairy", amount: 4, timestamp: Date.now() - 8000 },
-      { id: "9", type: "electricity", amount: 50, timestamp: Date.now() - 9000 },
-      { id: "10", type: "naturalGas", amount: 20, timestamp: Date.now() - 10000 },
+      {
+        id: "9",
+        type: "electricity",
+        amount: 50,
+        timestamp: Date.now() - 9000,
+      },
+      {
+        id: "10",
+        type: "naturalGas",
+        amount: 20,
+        timestamp: Date.now() - 10000,
+      },
       { id: "11", type: "clothing", amount: 2, timestamp: Date.now() - 11000 },
-      { id: "12", type: "electronics", amount: 1, timestamp: Date.now() - 12000 },
-      { id: "13", type: "unknown-type", amount: 5, timestamp: Date.now() - 13000 },
+      {
+        id: "12",
+        type: "electronics",
+        amount: 1,
+        timestamp: Date.now() - 12000,
+      },
+      {
+        id: "13",
+        type: "unknown-type",
+        amount: 5,
+        timestamp: Date.now() - 13000,
+      },
     ];
 
-    render(<HistoryList activities={mockActivities} onClearActivities={() => {}} />);
+    render(
+      <HistoryList activities={mockActivities} onClearActivities={() => {}} />
+    );
 
     // Verify labels
     expect(screen.getByText("Car Trip")).toBeInTheDocument();
@@ -64,7 +86,9 @@ describe("HistoryList Component", () => {
       { id: "3", type: "flight", amount: 1000, timestamp: Date.now() - 3000 },
     ];
 
-    render(<HistoryList activities={mockActivities} onClearActivities={() => {}} />);
+    render(
+      <HistoryList activities={mockActivities} onClearActivities={() => {}} />
+    );
 
     expect(screen.getByText(/Low Impact/i)).toBeInTheDocument();
     expect(screen.getByText(/Medium Impact/i)).toBeInTheDocument();
