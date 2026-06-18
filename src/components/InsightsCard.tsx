@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import type { InsightsResult } from "../hooks/useInsights";
 import {
-  INDIAN_WEEKLY_AVERAGE_KG,
-  BELOW_AVERAGE_THRESHOLD,
-  ABOVE_AVERAGE_THRESHOLD,
   COUNTUP_DURATION_MS,
   COUNTUP_INTERVAL_MS,
+  INDIAN_WEEKLY_AVERAGE_KG,
 } from "../constants/calculationConstants";
+import {
+  getComparisonDetails,
+  getRecommendationDetails,
+} from "../lib/insightUtils";
 
 interface InsightsCardProps {
   insights: InsightsResult;
@@ -52,91 +54,17 @@ export function InsightsCard({ insights }: InsightsCardProps) {
     return () => clearInterval(timer);
   }, [totalWeeklyCO2]);
 
-  // Target comparison metrics
   const indianWeeklyAverageKg = INDIAN_WEEKLY_AVERAGE_KG; // 1900 kg / 52 weeks
-  const percentageOfAverage = (totalWeeklyCO2 / indianWeeklyAverageKg) * 100;
+  const {
+    percentageOfAverage,
+    statusLabel,
+    statusTextDesc,
+    barColorClass,
+    textColorClass,
+    ratingLabelText,
+  } = getComparisonDetails(totalWeeklyCO2);
 
-  // Determine comparison rating and color
-  let statusLabel = "No Data";
-  let statusTextDesc = "Log activities to calculate your standing.";
-  let barColorClass = "bg-emerald-500";
-  let textColorClass = "text-emerald-400";
-  let ratingLabelText = "No activities logged this week.";
-
-  if (totalWeeklyCO2 > 0) {
-    if (percentageOfAverage < BELOW_AVERAGE_THRESHOLD) {
-      statusLabel = "Below Average";
-      statusTextDesc =
-        "Your footprint is below the national average benchmark.";
-      barColorClass = "bg-emerald-500";
-      textColorClass = "text-emerald-400";
-    } else if (
-      percentageOfAverage >= BELOW_AVERAGE_THRESHOLD &&
-      percentageOfAverage <= ABOVE_AVERAGE_THRESHOLD
-    ) {
-      statusLabel = "Near Average";
-      statusTextDesc =
-        "Your footprint is inline with the national average benchmark.";
-      barColorClass = "bg-amber-500";
-      textColorClass = "text-amber-400";
-    } else {
-      statusLabel = "Above Average";
-      statusTextDesc = "Your footprint exceeds the national average benchmark.";
-      barColorClass = "bg-rose-500";
-      textColorClass = "text-rose-400";
-    }
-
-    ratingLabelText = `Standing: ${statusLabel} (${Math.round(
-      percentageOfAverage
-    )}% of weekly national average).`;
-  }
-
-  /**
-   * Resolves the customized green recommendation card based on the highest impact category.
-   *
-   * @returns An object with headline, expected saving estimation, and recommended action text.
-   */
-  const getRecommendationDetails = () => {
-    switch (highestImpactCategory) {
-      case "transport":
-        return {
-          headline: "Commute Green",
-          saving: "15.0 kg",
-          action:
-            "Switch your next local car trip to cycling or taking public transit.",
-        };
-      case "food":
-        return {
-          headline: "Plant-Based Eating",
-          saving: "53.5 kg",
-          action:
-            "Replace beef or dairy in your next meal with poultry or plant-based alternatives.",
-        };
-      case "energy":
-        return {
-          headline: "Efficient Power",
-          saving: "5.0 kg",
-          action:
-            "Shut down idle electronics and swap standard light bulbs to LED models.",
-        };
-      case "shopping":
-        return {
-          headline: "Extend Device Lifespans",
-          saving: "300.0 kg",
-          action:
-            "Extend the lifecycle of your current laptop and choose second-hand clothing.",
-        };
-      default:
-        return {
-          headline: "Log First Activity",
-          saving: "100.0 kg",
-          action:
-            "Log your transport, food, energy, and shopping logs to receive carbon tips.",
-        };
-    }
-  };
-
-  const rec = getRecommendationDetails();
+  const rec = getRecommendationDetails(highestImpactCategory);
 
   return (
     <section className="bg-slate-900/40 backdrop-blur-xl border border-emerald-900/10 rounded-3xl p-6 shadow-2xl transition-all duration-300 hover:border-emerald-500/20 flex flex-col justify-between h-full">

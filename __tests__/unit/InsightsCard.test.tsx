@@ -9,11 +9,9 @@ describe("InsightsCard Component", () => {
     highestImpactCategory: "none",
     topRecommendation:
       "Log your activities to receive personalized carbon reduction recommendations.",
-    categoryEmissions: { transport: 0, food: 0, energy: 0, shopping: 0 },
     comparisonToIndianAverage: {
       userAnnualEstimateKg: 0,
       indianAverageAnnualKg: 1900,
-      differenceKg: -1900,
       differencePercentage: -100,
       comparisonText: "No activities logged this week.",
     },

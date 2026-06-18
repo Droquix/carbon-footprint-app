@@ -1,11 +1,8 @@
 import { useState, useMemo } from "react";
 import {
-  isValidTransportType,
-  isValidFoodType,
-  isValidEnergyType,
-  isValidShoppingType,
-  sanitizeNumberInput,
-} from "../lib/validators";
+  getDefaultTypeForCategory,
+  validateActivityInput,
+} from "../lib/formUtils";
 import { MIN_BUTTON_HEIGHT } from "../constants/uiConstants";
 
 interface ActivityFormProps {
@@ -81,10 +78,8 @@ export function ActivityForm({ onLogActivity }: ActivityFormProps) {
     nextCat: "transport" | "food" | "energy" | "shopping"
   ) => {
     setCategory(nextCat);
-    if (nextCat === "transport") setActivityType("car");
-    else if (nextCat === "food") setActivityType("beef");
-    else if (nextCat === "energy") setActivityType("electricity");
-    else if (nextCat === "shopping") setActivityType("clothing");
+    const defaultType = getDefaultTypeForCategory(nextCat);
+    setActivityType(defaultType);
   };
 
   /**
@@ -107,28 +102,17 @@ export function ActivityForm({ onLogActivity }: ActivityFormProps) {
    */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const sanitizedAmount = sanitizeNumberInput(amountInput);
-    if (sanitizedAmount <= 0) {
-      alert("Please enter a valid positive quantity.");
+    const validation = validateActivityInput(
+      category,
+      activityType,
+      amountInput
+    );
+    if (!validation.isValid) {
+      alert(validation.error);
       return;
     }
 
-    let isValid = false;
-    if (category === "transport" && isValidTransportType(activityType))
-      isValid = true;
-    else if (category === "food" && isValidFoodType(activityType))
-      isValid = true;
-    else if (category === "energy" && isValidEnergyType(activityType))
-      isValid = true;
-    else if (category === "shopping" && isValidShoppingType(activityType))
-      isValid = true;
-
-    if (!isValid) {
-      alert("Invalid activity selection.");
-      return;
-    }
-
-    onLogActivity(activityType, sanitizedAmount);
+    onLogActivity(activityType, validation.sanitizedAmount);
     setAmountInput(""); // Clear amount input
   };
 

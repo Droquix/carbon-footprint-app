@@ -5,7 +5,12 @@ import {
   calculateEnergyEmissions,
   calculateShoppingEmissions,
 } from "../../src/lib/emissions";
-import type { TransportFactors, FoodFactors } from "../../src/types";
+import type {
+  TransportFactors,
+  FoodFactors,
+  EnergyFactors,
+  ShoppingFactors,
+} from "../../src/types";
 
 describe("Transport Emissions", () => {
   // 1. Normal valid inputs
@@ -123,7 +128,7 @@ describe("Energy Emissions", () => {
   // 14. Invalid type throws
   it("throws error for invalid energy type", () => {
     expect(() =>
-      calculateEnergyEmissions("nuclear" as unknown as any, 100)
+      calculateEnergyEmissions("nuclear" as unknown as keyof EnergyFactors, 100)
     ).toThrowError();
   });
 });
@@ -150,7 +155,10 @@ describe("Shopping Emissions", () => {
   // 17. Invalid type throws
   it("throws error for invalid shopping type", () => {
     expect(() =>
-      calculateShoppingEmissions("furniture" as unknown as any, 1)
+      calculateShoppingEmissions(
+        "furniture" as unknown as keyof ShoppingFactors,
+        1
+      )
     ).toThrowError();
   });
 });

@@ -4,6 +4,7 @@ import { ActivityForm } from "./components/ActivityForm";
 import { InsightsCard } from "./components/InsightsCard";
 import { HistoryList } from "./components/HistoryList";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { calculateCircumference, calculateStrokeOffset } from "./lib/svgUtils";
 import {
   SVG_RADIUS,
   SVG_STROKE_WIDTH,
@@ -28,8 +29,8 @@ function App() {
     (weeklyEmissions / maxWeeklyBudget) * 100
   );
   const radius = SVG_RADIUS;
-  const circumference = 2 * Math.PI * radius; // ~263.89
-  const strokeOffset = circumference - (progressPercent / 100) * circumference;
+  const circumference = calculateCircumference(radius); // ~263.89
+  const strokeOffset = calculateStrokeOffset(progressPercent, circumference);
 
   return (
     <div className="min-h-screen flex flex-col font-sans selection:bg-emerald-500/30 selection:text-emerald-100">
