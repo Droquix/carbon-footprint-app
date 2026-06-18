@@ -72,4 +72,48 @@ describe("Storage Abstraction", () => {
     getItemSpy.mockRestore();
     removeItemSpy.mockRestore();
   });
+
+  it("should handle JSON parsing errors gracefully when retrieved data is malformed", () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    localStorage.setItem("carbon_footprint_activities", "{invalidjson}");
+    expect(getActivities()).toEqual([]);
+    expect(errorSpy).toHaveBeenCalled();
+    errorSpy.mockRestore();
+  });
+
+  it("should handle error when setItem throws during saveActivity", () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const setItemSpy = vi
+      .spyOn(Storage.prototype, "setItem")
+      .mockImplementation((key) => {
+        if (key === "__storage_test__") {
+          return;
+        }
+        throw new Error("Quota exceeded");
+      });
+
+    saveActivity(sampleActivity);
+    expect(errorSpy).toHaveBeenCalled();
+
+    setItemSpy.mockRestore();
+    errorSpy.mockRestore();
+  });
+
+  it("should handle error when removeItem throws during clearActivities", () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const removeItemSpy = vi
+      .spyOn(Storage.prototype, "removeItem")
+      .mockImplementation((key) => {
+        if (key === "__storage_test__") {
+          return;
+        }
+        throw new Error("Failed to remove");
+      });
+
+    clearActivities();
+    expect(errorSpy).toHaveBeenCalled();
+
+    removeItemSpy.mockRestore();
+    errorSpy.mockRestore();
+  });
 });

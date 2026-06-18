@@ -119,10 +119,17 @@ describe("Energy Emissions", () => {
       7
     );
   });
+
+  // 14. Invalid type throws
+  it("throws error for invalid energy type", () => {
+    expect(() =>
+      calculateEnergyEmissions("nuclear" as unknown as any, 100)
+    ).toThrowError();
+  });
 });
 
 describe("Shopping Emissions", () => {
-  // 14. Normal valid inputs
+  // 15. Normal valid inputs
   it("calculates emissions for clothing and electronics", () => {
     // Clothing: 4 items * 15.0 = 60
     expect(calculateShoppingEmissions("clothing", 4)).toBeCloseTo(60);
@@ -130,7 +137,7 @@ describe("Shopping Emissions", () => {
     expect(calculateShoppingEmissions("electronics", 2)).toBeCloseTo(600);
   });
 
-  // 15. Zero, negative, invalid counts
+  // 16. Zero, negative, invalid counts
   it("returns zero for zero, negative, or invalid counts", () => {
     expect(calculateShoppingEmissions("clothing", 0)).toBe(0);
     expect(calculateShoppingEmissions("clothing", -2)).toBe(0);
@@ -138,5 +145,12 @@ describe("Shopping Emissions", () => {
       calculateShoppingEmissions("clothing", null as unknown as number)
     ).toBe(0);
     expect(calculateShoppingEmissions("clothing", NaN)).toBe(0);
+  });
+
+  // 17. Invalid type throws
+  it("throws error for invalid shopping type", () => {
+    expect(() =>
+      calculateShoppingEmissions("furniture" as unknown as any, 1)
+    ).toThrowError();
   });
 });
