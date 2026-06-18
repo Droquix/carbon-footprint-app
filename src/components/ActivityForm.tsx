@@ -6,11 +6,19 @@ import {
   isValidShoppingType,
   sanitizeNumberInput,
 } from "../lib/validators";
+import { MIN_BUTTON_HEIGHT } from "../constants/uiConstants";
 
 interface ActivityFormProps {
   onLogActivity: (type: string, amount: number) => void;
 }
 
+/**
+ * ActivityForm component for logging carbon footprint activities.
+ *
+ * @param props The component props.
+ * @param props.onLogActivity Callback function to log a validated activity.
+ * @returns The rendered React element.
+ */
 export function ActivityForm({ onLogActivity }: ActivityFormProps) {
   const [category, setCategory] = useState<
     "transport" | "food" | "energy" | "shopping"
@@ -50,7 +58,11 @@ export function ActivityForm({ onLogActivity }: ActivityFormProps) {
     }
   }, [category]);
 
-  // Determine current unit label
+  /**
+   * Helper function to determine the label of the measurement unit based on the selected activity.
+   *
+   * @returns A string representing the unit (e.g., "km", "kg", "kWh", "m³", or "item(s)").
+   */
   const getUnitLabel = () => {
     if (category === "transport") return "km";
     if (category === "food") return "kg";
@@ -59,6 +71,12 @@ export function ActivityForm({ onLogActivity }: ActivityFormProps) {
     return "item(s)";
   };
 
+  /**
+   * Selects a category and defaults the activity type.
+   *
+   * @param nextCat The category to switch to ("transport", "food", "energy", or "shopping").
+   * @returns void
+   */
   const selectCategory = (
     nextCat: "transport" | "food" | "energy" | "shopping"
   ) => {
@@ -69,12 +87,24 @@ export function ActivityForm({ onLogActivity }: ActivityFormProps) {
     else if (nextCat === "shopping") setActivityType("clothing");
   };
 
+  /**
+   * Handles changes to the category selection dropdown.
+   *
+   * @param e The change event from the category select element.
+   * @returns void
+   */
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     selectCategory(
       e.target.value as "transport" | "food" | "energy" | "shopping"
     );
   };
 
+  /**
+   * Validates input values and submits the new activity if validation passes.
+   *
+   * @param e The form submit event.
+   * @returns void
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const sanitizedAmount = sanitizeNumberInput(amountInput);
@@ -213,7 +243,8 @@ export function ActivityForm({ onLogActivity }: ActivityFormProps) {
               id="type-select"
               value={activityType}
               onChange={(e) => setActivityType(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 cursor-pointer min-h-[44px]"
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 cursor-pointer"
+              style={{ minHeight: MIN_BUTTON_HEIGHT }}
             >
               {typesOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -239,10 +270,14 @@ export function ActivityForm({ onLogActivity }: ActivityFormProps) {
                 value={amountInput}
                 onChange={(e) => setAmountInput(e.target.value)}
                 placeholder="e.g. 15.5"
-                className="flex-grow bg-slate-950 border border-slate-800 border-r-0 rounded-l-xl px-4 py-3 text-slate-200 placeholder-slate-600 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 min-h-[44px]"
+                className="flex-grow bg-slate-950 border border-slate-800 border-r-0 rounded-l-xl px-4 py-3 text-slate-200 placeholder-slate-600 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
+                style={{ minHeight: MIN_BUTTON_HEIGHT }}
                 required
               />
-              <span className="inline-flex items-center px-4 rounded-r-xl border border-l-0 border-slate-800 bg-slate-900 text-xs font-bold text-slate-400 min-h-[44px]">
+              <span
+                className="inline-flex items-center px-4 rounded-r-xl border border-l-0 border-slate-800 bg-slate-900 text-xs font-bold text-slate-400"
+                style={{ minHeight: MIN_BUTTON_HEIGHT }}
+              >
                 {getUnitLabel()}
               </span>
             </div>

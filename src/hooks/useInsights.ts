@@ -12,6 +12,11 @@ import {
   isValidEnergyType,
   isValidShoppingType,
 } from "../lib/validators";
+import {
+  WEEKLY_MS_DURATION,
+  ANNUAL_WEEKS,
+  INDIAN_ANNUAL_AVERAGE_KG,
+} from "../constants/calculationConstants";
 
 export interface InsightsResult {
   totalWeeklyCO2: number;
@@ -41,7 +46,7 @@ const CATEGORY_BUDGETS = {
  */
 export function useInsights(activities: Activity[]): InsightsResult {
   return useMemo(() => {
-    const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const oneWeekAgo = Date.now() - WEEKLY_MS_DURATION;
     const weeklyActivities = activities.filter(
       (act) => act.timestamp >= oneWeekAgo
     );
@@ -123,8 +128,8 @@ export function useInsights(activities: Activity[]): InsightsResult {
     }
 
     // Comparison to Indian average (1.9 tons/year = 1900 kg/year)
-    const userAnnualEstimateKg = totalWeeklyCO2 * 52;
-    const indianAverageAnnualKg = 1900;
+    const userAnnualEstimateKg = totalWeeklyCO2 * ANNUAL_WEEKS;
+    const indianAverageAnnualKg = INDIAN_ANNUAL_AVERAGE_KG;
     const differenceKg = userAnnualEstimateKg - indianAverageAnnualKg;
     const differencePercentage = (differenceKg / indianAverageAnnualKg) * 100;
 

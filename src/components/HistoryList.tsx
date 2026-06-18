@@ -11,17 +11,35 @@ import {
   isValidEnergyType,
   isValidShoppingType,
 } from "../lib/validators";
+import {
+  LOW_IMPACT_THRESHOLD,
+  MEDIUM_IMPACT_THRESHOLD,
+} from "../constants/calculationConstants";
+import { HISTORY_MAX_HEIGHT } from "../constants/uiConstants";
 
 interface HistoryListProps {
   activities: Activity[];
   onClearActivities: () => void;
 }
 
+/**
+ * HistoryList component that displays the timeline of logged activities.
+ *
+ * @param props Component properties.
+ * @param props.activities Array of logged activities.
+ * @param props.onClearActivities Callback to clear all logged activities.
+ * @returns The rendered React element.
+ */
 export function HistoryList({
   activities,
   onClearActivities,
 }: HistoryListProps) {
-  // Category and emissions resolver
+  /**
+   * Resolves the activity category, display label, and calculated CO2 emissions.
+   *
+   * @param act The activity object.
+   * @returns An object with category name, label, and calculated CO2 emissions.
+   */
   const getCategoryAndEmissions = (act: Activity) => {
     if (isValidTransportType(act.type)) {
       const co2 = calculateTransportEmissions(act.type, act.amount);
@@ -42,7 +60,12 @@ export function HistoryList({
     return { category: "Unknown", label: "❓ Other", co2: 0 };
   };
 
-  // Activity type label helper
+  /**
+   * Maps an activity type identifier to its human-readable label.
+   *
+   * @param type The activity type identifier (e.g., "car", "beef").
+   * @returns The human-readable label string.
+   */
   const getActivityTypeLabel = (type: string) => {
     switch (type) {
       case "car":
@@ -74,7 +97,12 @@ export function HistoryList({
     }
   };
 
-  // Unit helper
+  /**
+   * Resolves the unit label for an activity type.
+   *
+   * @param type The activity type identifier.
+   * @returns The unit label string (e.g., "km", "kg", "kWh", "m³", or "item(s)").
+   */
   const getUnit = (type: string) => {
     if (["car", "bus", "flight", "bike"].includes(type)) return "km";
     if (["beef", "chicken", "vegetables", "dairy"].includes(type)) return "kg";
@@ -83,15 +111,20 @@ export function HistoryList({
     return "item(s)";
   };
 
-  // Get color-coded pill formatting with text indicator to satisfy color-blind rules
+  /**
+   * Returns styling classes and a text label for the carbon impact category.
+   *
+   * @param co2 The carbon dioxide emission amount in kg.
+   * @returns An object with tailwind classes and a textual impact label.
+   */
   const getImpactPill = (co2: number) => {
-    if (co2 < 5) {
+    if (co2 < LOW_IMPACT_THRESHOLD) {
       return {
         classes:
           "bg-emerald-950/20 text-emerald-400 border border-emerald-500/20",
         label: "Low Impact",
       };
-    } else if (co2 >= 5 && co2 <= 30) {
+    } else if (co2 >= LOW_IMPACT_THRESHOLD && co2 <= MEDIUM_IMPACT_THRESHOLD) {
       return {
         classes: "bg-amber-950/20 text-amber-400 border border-amber-500/20",
         label: "Medium Impact",
@@ -142,7 +175,10 @@ export function HistoryList({
           </div>
         ) : (
           /* Vertical Timeline Layout container */
-          <div className="relative pl-6 max-h-[380px] overflow-y-auto pr-1 custom-scrollbar">
+          <div
+            className="relative pl-6 overflow-y-auto pr-1 custom-scrollbar"
+            style={{ maxHeight: HISTORY_MAX_HEIGHT }}
+          >
             {/* Timeline center line */}
             <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-slate-800"></div>
 

@@ -1,0 +1,10 @@
+export const INDIAN_ANNUAL_AVERAGE_KG = 1900;
+export const INDIAN_WEEKLY_AVERAGE_KG = 36.54;
+export const ANNUAL_WEEKS = 52;
+export const WEEKLY_MS_DURATION = 7 * 24 * 60 * 60 * 1000;
+export const BELOW_AVERAGE_THRESHOLD = 85;
+export const ABOVE_AVERAGE_THRESHOLD = 115;
+export const LOW_IMPACT_THRESHOLD = 5;
+export const MEDIUM_IMPACT_THRESHOLD = 30;
+export const COUNTUP_DURATION_MS = 800;
+export const COUNTUP_INTERVAL_MS = 25;

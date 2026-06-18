@@ -1,10 +1,25 @@
 import { useState, useEffect } from "react";
 import type { InsightsResult } from "../hooks/useInsights";
+import {
+  INDIAN_WEEKLY_AVERAGE_KG,
+  BELOW_AVERAGE_THRESHOLD,
+  ABOVE_AVERAGE_THRESHOLD,
+  COUNTUP_DURATION_MS,
+  COUNTUP_INTERVAL_MS,
+} from "../constants/calculationConstants";
 
 interface InsightsCardProps {
   insights: InsightsResult;
 }
 
+/**
+ * InsightsCard component to present carbon footprint calculations, statistics,
+ * comparison metrics, and a dynamic recommendation card.
+ *
+ * @param props Component properties.
+ * @param props.insights Computed insights data object.
+ * @returns The rendered React element.
+ */
 export function InsightsCard({ insights }: InsightsCardProps) {
   const { totalWeeklyCO2, highestImpactCategory, topRecommendation } = insights;
 
@@ -19,8 +34,8 @@ export function InsightsCard({ insights }: InsightsCardProps) {
       return;
     }
 
-    const duration = 800; // 800ms
-    const incrementTime = 25; // 25ms interval
+    const duration = COUNTUP_DURATION_MS; // 800ms
+    const incrementTime = COUNTUP_INTERVAL_MS; // 25ms interval
     const steps = duration / incrementTime;
     const stepValue = end / steps;
 
@@ -38,7 +53,7 @@ export function InsightsCard({ insights }: InsightsCardProps) {
   }, [totalWeeklyCO2]);
 
   // Target comparison metrics
-  const indianWeeklyAverageKg = 36.54; // 1900 kg / 52 weeks
+  const indianWeeklyAverageKg = INDIAN_WEEKLY_AVERAGE_KG; // 1900 kg / 52 weeks
   const percentageOfAverage = (totalWeeklyCO2 / indianWeeklyAverageKg) * 100;
 
   // Determine comparison rating and color
@@ -49,13 +64,16 @@ export function InsightsCard({ insights }: InsightsCardProps) {
   let ratingLabelText = "No activities logged this week.";
 
   if (totalWeeklyCO2 > 0) {
-    if (percentageOfAverage < 85) {
+    if (percentageOfAverage < BELOW_AVERAGE_THRESHOLD) {
       statusLabel = "Below Average";
       statusTextDesc =
         "Your footprint is below the national average benchmark.";
       barColorClass = "bg-emerald-500";
       textColorClass = "text-emerald-400";
-    } else if (percentageOfAverage >= 85 && percentageOfAverage <= 115) {
+    } else if (
+      percentageOfAverage >= BELOW_AVERAGE_THRESHOLD &&
+      percentageOfAverage <= ABOVE_AVERAGE_THRESHOLD
+    ) {
       statusLabel = "Near Average";
       statusTextDesc =
         "Your footprint is inline with the national average benchmark.";
@@ -73,7 +91,11 @@ export function InsightsCard({ insights }: InsightsCardProps) {
     )}% of weekly national average).`;
   }
 
-  // Get single targeted recommendation card
+  /**
+   * Resolves the customized green recommendation card based on the highest impact category.
+   *
+   * @returns An object with headline, expected saving estimation, and recommended action text.
+   */
   const getRecommendationDetails = () => {
     switch (highestImpactCategory) {
       case "transport":

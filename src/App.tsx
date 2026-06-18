@@ -4,19 +4,30 @@ import { ActivityForm } from "./components/ActivityForm";
 import { InsightsCard } from "./components/InsightsCard";
 import { HistoryList } from "./components/HistoryList";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import {
+  SVG_RADIUS,
+  SVG_STROKE_WIDTH,
+  MAX_WEEKLY_BUDGET,
+} from "./constants/uiConstants";
 
+/**
+ * Main application component that coordinates the layout, State hooks,
+ * Carbon footprint calculator widget, Insights card display, and Activity log timeline.
+ *
+ * @returns The rendered React element.
+ */
 function App() {
   const { activities, addActivity, clearAllActivities } = useFootprint();
   const insights = useInsights(activities);
 
   // SVG progress ring math
-  const maxWeeklyBudget = 100; // max weekly budget in kg
+  const maxWeeklyBudget = MAX_WEEKLY_BUDGET; // max weekly budget in kg
   const weeklyEmissions = insights.totalWeeklyCO2;
   const progressPercent = Math.min(
     100,
     (weeklyEmissions / maxWeeklyBudget) * 100
   );
-  const radius = 42;
+  const radius = SVG_RADIUS;
   const circumference = 2 * Math.PI * radius; // ~263.89
   const strokeOffset = circumference - (progressPercent / 100) * circumference;
 
@@ -85,7 +96,7 @@ function App() {
                   cy="48"
                   r={radius}
                   className="stroke-slate-800"
-                  strokeWidth="6"
+                  strokeWidth={SVG_STROKE_WIDTH}
                   fill="transparent"
                 />
                 {/* Progress circle */}
@@ -94,7 +105,7 @@ function App() {
                   cy="48"
                   r={radius}
                   className="stroke-emerald-500 transition-all duration-500"
-                  strokeWidth="6"
+                  strokeWidth={SVG_STROKE_WIDTH}
                   fill="transparent"
                   strokeDasharray={circumference}
                   strokeDashoffset={strokeOffset}

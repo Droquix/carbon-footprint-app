@@ -4,6 +4,8 @@ import { getActivities, saveActivity, clearActivities } from "../lib/storage";
 
 /**
  * Custom hook to manage carbon footprint activity logs in state and localStorage.
+ *
+ * @returns An object containing the list of activities, and functions to add or clear activities.
  */
 export function useFootprint() {
   const [activities, setActivities] = useState<Activity[]>(() =>

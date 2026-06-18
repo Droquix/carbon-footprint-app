@@ -5,6 +5,8 @@ const STORAGE_KEY = "carbon_footprint_activities";
 /**
  * Checks if localStorage is available and functional.
  * This handles private browsing modes or restricted environments safely.
+ *
+ * @returns A boolean indicating if localStorage is available.
  */
 function isStorageAvailable(): boolean {
   try {
@@ -19,7 +21,6 @@ function isStorageAvailable(): boolean {
 
 /**
  * Retrieves the list of logged activities from localStorage.
- * If localStorage is unavailable or empty, returns an empty array.
  *
  * @returns An array of Activity objects.
  */
@@ -64,6 +65,8 @@ export function saveActivity(activity: Activity): void {
 
 /**
  * Clears all saved activities from localStorage.
+ *
+ * @returns void
  */
 export function clearActivities(): void {
   if (!isStorageAvailable()) {
