@@ -102,4 +102,18 @@ describe("calculateCategoryPercentages", () => {
       shopping: 0,
     });
   });
+
+  it("should handle unknown activity categories gracefully", () => {
+    const activities: Activity[] = [
+      { id: "1", type: "unknown", amount: 10, timestamp: refTime - 1000 },
+    ];
+
+    const percentages = calculateCategoryPercentages(activities, refTime);
+    expect(percentages).toEqual({
+      transport: 0,
+      food: 0,
+      energy: 0,
+      shopping: 0,
+    });
+  });
 });
