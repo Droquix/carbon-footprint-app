@@ -8,6 +8,8 @@ import { calculateCircumference, calculateStrokeOffset } from "./lib/svgUtils";
 import {
   SVG_RADIUS,
   SVG_STROKE_WIDTH,
+  SVG_CENTER_X,
+  SVG_CENTER_Y,
   MAX_WEEKLY_BUDGET,
 } from "./constants/uiConstants";
 
@@ -53,7 +55,7 @@ function App() {
               Dashboard
             </a>
             <a
-              href="https://github.com/vitejs/vite"
+              href="https://github.com/Droquix/carbon-footprint-app"
               target="_blank"
               rel="noreferrer"
               aria-label="Docs (opens in a new tab)"
@@ -98,8 +100,8 @@ function App() {
               >
                 {/* Track circle */}
                 <circle
-                  cx="48"
-                  cy="48"
+                  cx={SVG_CENTER_X}
+                  cy={SVG_CENTER_Y}
                   r={radius}
                   className="stroke-slate-800"
                   strokeWidth={SVG_STROKE_WIDTH}
@@ -107,8 +109,8 @@ function App() {
                 />
                 {/* Progress circle */}
                 <circle
-                  cx="48"
-                  cy="48"
+                  cx={SVG_CENTER_X}
+                  cy={SVG_CENTER_Y}
                   r={radius}
                   className="stroke-emerald-500 transition-all duration-500"
                   strokeWidth={SVG_STROKE_WIDTH}
