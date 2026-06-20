@@ -114,3 +114,12 @@ export interface HistoryListProps {
   activities: Activity[];
   onClearActivities: () => void;
 }
+
+export interface CategoryBreakdownProps {
+  percentages: {
+    transport: number;
+    food: number;
+    energy: number;
+    shopping: number;
+  };
+}

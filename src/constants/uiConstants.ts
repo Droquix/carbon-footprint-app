@@ -5,3 +5,7 @@ export const SVG_STROKE_WIDTH = 6;
 export const SVG_CENTER_X = 48;
 export const SVG_CENTER_Y = 48;
 export const MAX_WEEKLY_BUDGET = 100;
+export const COLOR_TRANSPORT = "bg-sky-500";
+export const COLOR_FOOD = "bg-emerald-500";
+export const COLOR_ENERGY = "bg-amber-500";
+export const COLOR_SHOPPING = "bg-violet-500";

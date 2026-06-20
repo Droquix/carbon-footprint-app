@@ -4,6 +4,8 @@ import { ActivityForm } from "./components/ActivityForm";
 import { InsightsCard } from "./components/InsightsCard";
 import { HistoryList } from "./components/HistoryList";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { CategoryBreakdown } from "./components/CategoryBreakdown";
+import { calculateCategoryPercentages } from "./lib/categoryBreakdown";
 import { calculateCircumference, calculateStrokeOffset } from "./lib/svgUtils";
 import {
   SVG_RADIUS,
@@ -33,6 +35,7 @@ function App() {
   const radius = SVG_RADIUS;
   const circumference = calculateCircumference(radius); // ~263.89
   const strokeOffset = calculateStrokeOffset(progressPercent, circumference);
+  const categoryPercentages = calculateCategoryPercentages(activities);
 
   return (
     <div className="min-h-screen flex flex-col font-sans selection:bg-emerald-500/30 selection:text-emerald-100">
@@ -171,6 +174,10 @@ function App() {
             </ErrorBoundary>
           </section>
         </div>
+
+        <ErrorBoundary fallbackTitle="Category Breakdown Unavailable">
+          <CategoryBreakdown percentages={categoryPercentages} />
+        </ErrorBoundary>
       </main>
 
       {/* Footer */}

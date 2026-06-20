@@ -117,4 +117,26 @@ describe("Carbon Footprint App Integration", () => {
 
     expect(screen.getByText(/no activities logged yet/i)).toBeInTheDocument();
   });
+
+  // 5. Category breakdown updates when a new activity is logged
+  it("should update the category breakdown chart when a new activity is logged", async () => {
+    render(<App />);
+
+    expect(screen.getByText("Category Breakdown")).toBeInTheDocument();
+
+    const categorySelect = screen.getByLabelText(/category/i);
+    const typeSelect = screen.getByLabelText(/activity type/i);
+    const amountInput = screen.getByLabelText(/quantity \/ amount/i);
+    const submitButton = screen.getByRole("button", { name: /log activity/i });
+
+    // Log a transport activity: 100 km Car
+    fireEvent.change(categorySelect, { target: { value: "transport" } });
+    fireEvent.change(typeSelect, { target: { value: "car" } });
+    await userEvent.type(amountInput, "100");
+    await userEvent.click(submitButton);
+
+    // Verify breakdown displays 100.0% for Transport and 0.0% for other categories
+    expect(screen.getByText("100.0%")).toBeInTheDocument();
+    expect(screen.getAllByText("0.0%")).toHaveLength(3);
+  });
 });
