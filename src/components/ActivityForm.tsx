@@ -40,7 +40,7 @@ export function ActivityForm({ onLogActivity }: ActivityFormProps) {
           <CategorySelector category={category} onSelectCategory={handleSelectCategory} />
           <ActivityTypeSelector activityType={activityType} onChangeActivityType={setActivityType} typesOptions={typesOptions} />
           <QuantityInput amountInput={amountInput} onChangeAmountInput={setAmountInput} unitLabel={getUnit(activityType)} />
-          <button type="submit" className="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/25 active:scale-[0.98] transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-emerald-500/50">Log Activity</button>
+          <button type="submit" style={{ backgroundColor: "#34d399", color: "#020617" }} className="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/25 active:scale-[0.98] transition-all duration-200 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-emerald-500/50">Log Activity</button>
         </form>
       </div>
     </section>
