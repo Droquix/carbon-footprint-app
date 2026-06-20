@@ -25,7 +25,7 @@ describe("InsightsCard Component", () => {
 
   it("renders correctly with default/empty insights", () => {
     render(<InsightsCard insights={baseInsights} />);
-    expect(screen.getByText("Weekly Insights")).toBeInTheDocument();
+    expect(screen.getByText("Your Carbon Assistant")).toBeInTheDocument();
     expect(
       screen.getByText("No activities logged this week.")
     ).toBeInTheDocument();
