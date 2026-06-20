@@ -61,9 +61,7 @@ describe("Carbon Footprint App Integration", () => {
     expect(screen.getAllByText("🥗 Food")).toHaveLength(2);
 
     // Verify food-specific recommendation is shown
-    expect(
-      screen.getByText(/reduce beef and dairy consumption/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Replace beef/i)).toBeInTheDocument();
   });
 
   // 3. History shows logged entries in reverse chronological order

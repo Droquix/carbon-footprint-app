@@ -72,7 +72,7 @@ describe("useInsights Hook", () => {
     // Total: 17 + 119.2 + 74.2 = 210.4 kg CO2e
     expect(result.current.totalWeeklyCO2).toBeCloseTo(210.4);
     expect(result.current.highestImpactCategory).toBe("food");
-    expect(result.current.topRecommendation).toMatch(/reduce beef and dairy/i);
+    expect(result.current.topRecommendation).toMatch(/Replace beef/i);
 
     // Annual estimate: 210.4 * 52 = 10940.8 kg
     // Indian average: 1900 kg
@@ -109,9 +109,7 @@ describe("useInsights Hook", () => {
     ];
     const { result } = renderHook(() => useInsights(mockActivities));
     expect(result.current.highestImpactCategory).toBe("energy");
-    expect(result.current.topRecommendation).toMatch(
-      /Improve energy efficiency/i
-    );
+    expect(result.current.topRecommendation).toMatch(/switch to LED/i);
   });
 
   it("handles shopping emissions as the highest impact category", () => {
@@ -121,9 +119,7 @@ describe("useInsights Hook", () => {
     ];
     const { result } = renderHook(() => useInsights(mockActivities));
     expect(result.current.highestImpactCategory).toBe("shopping");
-    expect(result.current.topRecommendation).toMatch(
-      /Opt for second-hand clothing/i
-    );
+    expect(result.current.topRecommendation).toMatch(/second-hand/i);
   });
 
   it("calculates comparison correctly when user matches the Indian average", () => {

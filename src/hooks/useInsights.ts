@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import type { Activity } from "../types";
+import type { Activity, RecommendationDetails } from "../types";
+import { getRecommendationDetails } from "../lib/insightUtils";
 import {
   calculateTransportEmissions,
   calculateFoodEmissions,
@@ -22,6 +23,7 @@ export interface InsightsResult {
   totalWeeklyCO2: number;
   highestImpactCategory: "transport" | "food" | "energy" | "shopping" | "none";
   topRecommendation: string;
+  recommendation: RecommendationDetails;
   comparisonToIndianAverage: {
     userAnnualEstimateKg: number;
     indianAverageAnnualKg: number;
@@ -111,21 +113,8 @@ export function useInsights(activities: Activity[]): InsightsResult {
     }
 
     // Recommendation logic
-    let topRecommendation =
-      "Log your activities to receive personalized carbon reduction recommendations.";
-    if (highestImpactCategory === "transport") {
-      topRecommendation =
-        "Consider using public transit (bus) or biking instead of driving to lower your transport footprint.";
-    } else if (highestImpactCategory === "food") {
-      topRecommendation =
-        "Reduce beef and dairy consumption by incorporating more plant-based meals into your diet.";
-    } else if (highestImpactCategory === "energy") {
-      topRecommendation =
-        "Improve energy efficiency by turning off idle appliances and switching to LED lighting.";
-    } else if (highestImpactCategory === "shopping") {
-      topRecommendation =
-        "Opt for second-hand clothing or extend the lifespan of your electronics before upgrading.";
-    }
+    const rec = getRecommendationDetails(activities, highestImpactCategory);
+    const topRecommendation = rec.action;
 
     // Comparison to Indian average (1.9 tons/year = 1900 kg/year)
     const userAnnualEstimateKg = totalWeeklyCO2 * ANNUAL_WEEKS;
@@ -149,6 +138,7 @@ export function useInsights(activities: Activity[]): InsightsResult {
       totalWeeklyCO2,
       highestImpactCategory,
       topRecommendation,
+      recommendation: rec,
       comparisonToIndianAverage: {
         userAnnualEstimateKg,
         indianAverageAnnualKg,

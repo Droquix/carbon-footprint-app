@@ -9,6 +9,12 @@ describe("InsightsCard Component", () => {
     highestImpactCategory: "none",
     topRecommendation:
       "Log your activities to receive personalized carbon reduction recommendations.",
+    recommendation: {
+      headline: "Log First Activity",
+      saving: "0.0 kg",
+      action:
+        "Log your activities to receive personalized carbon reduction recommendations.",
+    },
     comparisonToIndianAverage: {
       userAnnualEstimateKg: 0,
       indianAverageAnnualKg: 1900,
@@ -24,7 +30,7 @@ describe("InsightsCard Component", () => {
       screen.getByText("No activities logged this week.")
     ).toBeInTheDocument();
     expect(screen.getByText("Log First Activity")).toBeInTheDocument();
-    expect(screen.getByText("~100.0 kg CO2e")).toBeInTheDocument();
+    expect(screen.getByText("~0.0 kg CO2e")).toBeInTheDocument();
   });
 
   describe("Countup animation", () => {
@@ -95,6 +101,11 @@ describe("InsightsCard Component", () => {
         totalWeeklyCO2: 10,
         highestImpactCategory: "transport",
         topRecommendation: "Consider using public transit...",
+        recommendation: {
+          headline: "Commute Green",
+          saving: "15.0 kg",
+          action: "Consider using public transit...",
+        },
       };
       render(<InsightsCard insights={insights} />);
       expect(screen.getByText("Commute Green")).toBeInTheDocument();
@@ -110,6 +121,11 @@ describe("InsightsCard Component", () => {
         totalWeeklyCO2: 10,
         highestImpactCategory: "food",
         topRecommendation: "Reduce beef and dairy consumption...",
+        recommendation: {
+          headline: "Plant-Based Eating",
+          saving: "53.5 kg",
+          action: "Reduce beef and dairy consumption...",
+        },
       };
       render(<InsightsCard insights={insights} />);
       expect(screen.getByText("Plant-Based Eating")).toBeInTheDocument();
@@ -125,6 +141,11 @@ describe("InsightsCard Component", () => {
         totalWeeklyCO2: 10,
         highestImpactCategory: "energy",
         topRecommendation: "Improve energy efficiency...",
+        recommendation: {
+          headline: "Efficient Power",
+          saving: "5.0 kg",
+          action: "Improve energy efficiency...",
+        },
       };
       render(<InsightsCard insights={insights} />);
       expect(screen.getByText("Efficient Power")).toBeInTheDocument();
@@ -140,6 +161,11 @@ describe("InsightsCard Component", () => {
         totalWeeklyCO2: 10,
         highestImpactCategory: "shopping",
         topRecommendation: "Opt for second-hand clothing...",
+        recommendation: {
+          headline: "Extend Device Lifespans",
+          saving: "300.0 kg",
+          action: "Opt for second-hand clothing...",
+        },
       };
       render(<InsightsCard insights={insights} />);
       expect(screen.getByText("Extend Device Lifespans")).toBeInTheDocument();

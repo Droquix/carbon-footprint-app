@@ -82,6 +82,12 @@ export interface RecommendationCardProps {
   topRecommendation: string;
 }
 
+export interface RecommendationDetails {
+  headline: string;
+  saving: string;
+  action: string;
+}
+
 export interface InsightsCardProps {
   insights: {
     totalWeeklyCO2: number;
@@ -92,6 +98,7 @@ export interface InsightsCardProps {
       | "shopping"
       | "none";
     topRecommendation: string;
+    recommendation: RecommendationDetails;
     comparisonToIndianAverage: {
       userAnnualEstimateKg: number;
       indianAverageAnnualKg: number;

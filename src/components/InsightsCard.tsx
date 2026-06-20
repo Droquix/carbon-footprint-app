@@ -1,7 +1,7 @@
 import { INDIAN_WEEKLY_AVERAGE_KG } from "../constants/calculationConstants";
 import { useCountUp } from "../hooks/useCountUp";
 // prettier-ignore
-import { getComparisonDetails, getRecommendationDetails } from "../lib/insightUtils";
+import { getComparisonDetails } from "../lib/insightUtils";
 import type { InsightsCardProps } from "../types";
 import { AverageComparison } from "./AverageComparison";
 import { RecommendationCard } from "./RecommendationCard";
@@ -15,10 +15,10 @@ const contributors: Record<string, string> = { transport: "🚗 Transport", food
  */
 // prettier-ignore
 export function InsightsCard({ insights }: InsightsCardProps) {
-  const { totalWeeklyCO2, highestImpactCategory, topRecommendation } = insights;
+  const { totalWeeklyCO2, highestImpactCategory, topRecommendation, recommendation } = insights;
   const displayCO2 = useCountUp(totalWeeklyCO2);
   const comparison = getComparisonDetails(totalWeeklyCO2);
-  const rec = getRecommendationDetails(highestImpactCategory);
+  const rec = recommendation;
 
   return (
     <section className="bg-slate-900/40 backdrop-blur-xl border border-emerald-900/10 rounded-3xl p-6 shadow-2xl transition-all duration-300 hover:border-emerald-500/20 flex flex-col justify-between h-full">
