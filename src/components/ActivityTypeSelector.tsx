@@ -21,7 +21,7 @@ export function ActivityTypeSelector({
       <select
         id="type-select"
         value={activityType}
-        onChange={(e) => onChangeActivityType(e.target.value)}
+        onChange={(event) => onChangeActivityType(event.target.value)}
         className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 cursor-pointer"
         style={{ minHeight: MIN_BUTTON_HEIGHT }}
       >

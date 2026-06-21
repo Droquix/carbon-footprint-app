@@ -31,11 +31,11 @@ export function getActivities(): Activity[] {
   }
 
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (!data) return [];
+    const serializedActivities = localStorage.getItem(STORAGE_KEY);
+    if (!serializedActivities) return [];
 
-    const parsed = JSON.parse(data);
-    return Array.isArray(parsed) ? parsed : [];
+    const parsedActivities = JSON.parse(serializedActivities);
+    return Array.isArray(parsedActivities) ? parsedActivities : [];
   } catch (error) {
     console.error("Failed to parse activities from localStorage:", error);
     return [];

@@ -201,7 +201,8 @@ export function getRecommendationDetails(
 
   const oneWeekAgo = referenceTime - WEEKLY_MS_DURATION;
   const weeklyActivities = activities.filter(
-    (act) => act.timestamp >= oneWeekAgo && act.timestamp <= referenceTime
+    (activity) =>
+      activity.timestamp >= oneWeekAgo && activity.timestamp <= referenceTime
   );
 
   // Group emissions by activity type in the highestImpactCategory
@@ -209,13 +210,13 @@ export function getRecommendationDetails(
   const typeCounts: Record<string, number> = {};
   const typeAmounts: Record<string, number> = {};
 
-  for (const act of weeklyActivities) {
-    const { category, co2 } = getCategoryAndEmissions(act);
+  for (const activity of weeklyActivities) {
+    const { category, co2 } = getCategoryAndEmissions(activity);
     if (category.toLowerCase() === highestImpactCategory) {
-      const type = act.type;
+      const type = activity.type;
       typeEmissions[type] = (typeEmissions[type] || 0) + co2;
       typeCounts[type] = (typeCounts[type] || 0) + 1;
-      typeAmounts[type] = (typeAmounts[type] || 0) + act.amount;
+      typeAmounts[type] = (typeAmounts[type] || 0) + activity.amount;
     }
   }
 

@@ -98,7 +98,7 @@ export function useInsights(activities: Activity[]): InsightsResult {
     ];
 
     // Find the category with the highest normalized score (excluding categories with 0 emissions)
-    const activeScores = scores.filter((s) => s.value > 0);
+    const activeScores = scores.filter((scoreEntry) => scoreEntry.value > 0);
     let highestImpactCategory:
       | "transport"
       | "food"

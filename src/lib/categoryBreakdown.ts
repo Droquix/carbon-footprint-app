@@ -23,7 +23,8 @@ export function calculateCategoryPercentages(
 ): CategoryPercentages {
   const oneWeekAgo = referenceTime - WEEKLY_MS_DURATION;
   const weeklyActivities = activities.filter(
-    (act) => act.timestamp >= oneWeekAgo && act.timestamp <= referenceTime
+    (activity) =>
+      activity.timestamp >= oneWeekAgo && activity.timestamp <= referenceTime
   );
 
   let transportSum = 0;
@@ -31,8 +32,8 @@ export function calculateCategoryPercentages(
   let energySum = 0;
   let shoppingSum = 0;
 
-  for (const act of weeklyActivities) {
-    const { category, co2 } = getCategoryAndEmissions(act);
+  for (const activity of weeklyActivities) {
+    const { category, co2 } = getCategoryAndEmissions(activity);
     if (category === "Transport") {
       transportSum += co2;
     } else if (category === "Food") {

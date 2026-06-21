@@ -13,7 +13,7 @@ import { HistoryEntry } from "./HistoryEntry";
  */
 // prettier-ignore
 export function HistoryList({ activities, onClearActivities }: HistoryListProps) {
-  const sorted = [...activities].sort((a, b) => b.timestamp - a.timestamp);
+  const sorted = [...activities].sort((activityA, activityB) => activityB.timestamp - activityA.timestamp);
   return (
     <section className="bg-slate-900/40 backdrop-blur-xl border border-emerald-900/10 rounded-3xl p-6 shadow-2xl transition-all duration-300 hover:border-emerald-500/20 flex flex-col justify-between h-full">
       <div>
@@ -32,10 +32,10 @@ export function HistoryList({ activities, onClearActivities }: HistoryListProps)
           <div className="relative pl-6 overflow-y-auto pr-1 custom-scrollbar" style={{ maxHeight: HISTORY_MAX_HEIGHT }}>
             <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-slate-800" />
             <ul className="space-y-6">
-              {sorted.map((act) => {
-                const { label, co2 } = getCategoryAndEmissions(act);
+              {sorted.map((activity) => {
+                const { label, co2 } = getCategoryAndEmissions(activity);
                 return (
-                  <HistoryEntry key={act.id} activity={act} categoryLabel={label} co2={co2} impactPill={getImpactPill(co2)} typeLabel={getActivityTypeLabel(act.type)} unit={getUnit(act.type)} />
+                  <HistoryEntry key={activity.id} activity={activity} categoryLabel={label} co2={co2} impactPill={getImpactPill(co2)} typeLabel={getActivityTypeLabel(activity.type)} unit={getUnit(activity.type)} />
                 );
               })}
             </ul>

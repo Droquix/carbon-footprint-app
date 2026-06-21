@@ -5,7 +5,7 @@ export interface Activity {
   timestamp: number;
 }
 
-export interface EmissionFactor {
+interface EmissionFactor {
   value: number;
   unit: string;
   citation: string;

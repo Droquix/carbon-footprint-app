@@ -16,9 +16,9 @@ export function HiddenCategorySelect({
       <select
         id="category-select"
         value={category}
-        onChange={(e) =>
+        onChange={(event) =>
           onSelectCategory(
-            e.target.value as "transport" | "food" | "energy" | "shopping"
+            event.target.value as "transport" | "food" | "energy" | "shopping"
           )
         }
       >

@@ -24,7 +24,7 @@ export function QuantityInput({
           type="number"
           step="any"
           value={amountInput}
-          onChange={(e) => onChangeAmountInput(e.target.value)}
+          onChange={(event) => onChangeAmountInput(event.target.value)}
           placeholder="e.g. 15.5"
           aria-describedby="unit-badge"
           className="flex-grow bg-slate-950 border border-slate-800 border-r-0 rounded-l-xl px-4 py-3 text-slate-200 placeholder-slate-600 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"

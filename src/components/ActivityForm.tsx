@@ -18,11 +18,11 @@ export function ActivityForm({ onLogActivity }: ActivityFormProps) {
   const [amountInput, setAmountInput] = useState<string>("");
   const typesOptions = useMemo(() => getTypesOptionsForCategory(category), [category]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const val = validateActivityInput(category, activityType, amountInput);
-    if (!val.isValid) return alert(val.error);
-    onLogActivity(activityType, val.sanitizedAmount);
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const validationResult = validateActivityInput(category, activityType, amountInput);
+    if (!validationResult.isValid) return alert(validationResult.error);
+    onLogActivity(activityType, validationResult.sanitizedAmount);
     setAmountInput("");
   };
 
