@@ -130,3 +130,13 @@ export interface CategoryBreakdownProps {
     shopping: number;
   };
 }
+
+export interface QuickStatsData {
+  totalLogged: number;
+  mostLoggedCategory: string;
+  avgCO2PerActivity: string;
+}
+
+export interface QuickStatsProps {
+  stats: QuickStatsData;
+}

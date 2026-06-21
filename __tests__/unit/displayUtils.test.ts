@@ -4,6 +4,7 @@ import {
   getUnit,
   getImpactPill,
   getCategoryAndEmissions,
+  calculateQuickStats,
 } from "../../src/lib/displayUtils";
 import type { Activity } from "../../src/types";
 
@@ -112,6 +113,50 @@ describe("displayUtils", () => {
       expect(res.category).toBe("Unknown");
       expect(res.label).toBe("❓ Other");
       expect(res.co2).toBe(0);
+    });
+  });
+
+  describe("calculateQuickStats", () => {
+    it("should handle empty activities list gracefully", () => {
+      const stats = calculateQuickStats([]);
+      expect(stats.totalLogged).toBe(0);
+      expect(stats.mostLoggedCategory).toBe("N/A");
+      expect(stats.avgCO2PerActivity).toBe("0.00 kg");
+    });
+
+    it("should calculate correct stats for a single activity", () => {
+      const activities: Activity[] = [
+        { id: "1", type: "car", amount: 100, timestamp: Date.now() }, // co2: 17 kg
+      ];
+      const stats = calculateQuickStats(activities);
+      expect(stats.totalLogged).toBe(1);
+      expect(stats.mostLoggedCategory).toBe("Transport");
+      expect(stats.avgCO2PerActivity).toBe("17.00 kg");
+    });
+
+    it("should calculate correct stats for multiple activities across different categories", () => {
+      const activities: Activity[] = [
+        { id: "1", type: "car", amount: 100, timestamp: Date.now() }, // Transport, co2: 17 kg
+        { id: "2", type: "beef", amount: 1, timestamp: Date.now() }, // Food, co2: 59.6 kg
+        { id: "3", type: "beef", amount: 1, timestamp: Date.now() }, // Food, co2: 59.6 kg
+      ];
+      // Total co2 = 17 + 59.6 + 59.6 = 136.2 kg
+      // Average = 136.2 / 3 = 45.40 kg
+      const stats = calculateQuickStats(activities);
+      expect(stats.totalLogged).toBe(3);
+      expect(stats.mostLoggedCategory).toBe("Food");
+      expect(stats.avgCO2PerActivity).toBe("45.40 kg");
+    });
+
+    it("should break ties alphabetically when multiple categories have equal counts", () => {
+      const activities: Activity[] = [
+        { id: "1", type: "car", amount: 10, timestamp: Date.now() }, // Transport, count 1
+        { id: "2", type: "beef", amount: 1, timestamp: Date.now() }, // Food, count 1
+      ];
+      // Food and Transport are tied (both count 1). Alphabetically "Food" < "Transport".
+      const stats = calculateQuickStats(activities);
+      expect(stats.totalLogged).toBe(2);
+      expect(stats.mostLoggedCategory).toBe("Food");
     });
   });
 });

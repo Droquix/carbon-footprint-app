@@ -29,8 +29,8 @@ describe("Carbon Footprint App Integration", () => {
     await userEvent.click(submitButton);
 
     // Verify CO2 updates correctly in insights (30 km * 0.17 = 5.1 kg CO2e)
-    expect(screen.getAllByText(/5.10/i)).toHaveLength(2); // total in insights and entry in history list
-    expect(screen.getByText("5.10 kg")).toBeInTheDocument();
+    expect(screen.getAllByText(/5.10/i).length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByText("5.10 kg").length).toBeGreaterThan(0);
   });
 
   // 2. User with highest food emissions sees food-specific recommendation
@@ -136,5 +136,31 @@ describe("Carbon Footprint App Integration", () => {
     // Verify breakdown displays 100.0% for Transport and 0.0% for other categories
     expect(screen.getByText("100.0%")).toBeInTheDocument();
     expect(screen.getAllByText("0.0%")).toHaveLength(3);
+  });
+
+  // 6. Quick stats summary strip updates when a new activity is logged
+  it("should update the quick stats summary strip when a new activity is logged", async () => {
+    render(<App />);
+
+    // Initially should show N/A and 0
+    expect(screen.getByText("0")).toBeInTheDocument();
+    expect(screen.getByText("N/A")).toBeInTheDocument();
+    expect(screen.getByText("0.00 kg")).toBeInTheDocument();
+
+    const categorySelect = screen.getByLabelText(/category/i);
+    const typeSelect = screen.getByLabelText(/activity type/i);
+    const amountInput = screen.getByLabelText(/quantity \/ amount/i);
+    const submitButton = screen.getByRole("button", { name: /log activity/i });
+
+    // Log Transport: 100 km Car (17 kg CO2e)
+    fireEvent.change(categorySelect, { target: { value: "transport" } });
+    fireEvent.change(typeSelect, { target: { value: "car" } });
+    await userEvent.type(amountInput, "100");
+    await userEvent.click(submitButton);
+
+    // Verify Quick Stats has updated to: Total Logged: 1, Most Logged: Transport, Avg CO2: 17.00 kg
+    expect(screen.getByText("1")).toBeInTheDocument();
+    expect(screen.getAllByText("Transport").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("17.00 kg").length).toBeGreaterThan(0);
   });
 });

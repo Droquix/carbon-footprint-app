@@ -2,7 +2,7 @@ import {
   LOW_IMPACT_THRESHOLD,
   MEDIUM_IMPACT_THRESHOLD,
 } from "../constants/calculationConstants";
-import type { Activity } from "../types";
+import type { Activity, QuickStatsData } from "../types";
 import {
   calculateTransportEmissions,
   calculateFoodEmissions,
@@ -124,4 +124,54 @@ export function getCategoryAndEmissions(act: Activity): {
     return { category: "Shopping", label: "🛍️ Shopping", co2 };
   }
   return { category: "Unknown", label: "❓ Other", co2: 0 };
+}
+
+/**
+ * Calculates Quick Stats summary metrics from the activity list.
+ *
+ * @param activities List of logged activities.
+ * @returns QuickStatsData object.
+ */
+export function calculateQuickStats(activities: Activity[]): QuickStatsData {
+  const totalLogged = activities.length;
+
+  if (totalLogged === 0) {
+    return {
+      totalLogged: 0,
+      mostLoggedCategory: "N/A",
+      avgCO2PerActivity: "0.00 kg",
+    };
+  }
+
+  // Count occurrences of each category
+  const categoryCounts: Record<string, number> = {};
+  let totalCO2 = 0;
+
+  for (const activity of activities) {
+    const { category, co2 } = getCategoryAndEmissions(activity);
+    totalCO2 += co2;
+    categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+  }
+
+  // Find the most logged category (with tie-breaking logic)
+  let mostLoggedCategory = "N/A";
+  let maxCount = -1;
+
+  // We sort categories alphabetically for predictable tie-breaking
+  const categories = Object.keys(categoryCounts).sort();
+  for (const category of categories) {
+    const count = categoryCounts[category];
+    if (count !== undefined && count > maxCount) {
+      maxCount = count;
+      mostLoggedCategory = category;
+    }
+  }
+
+  const avgCO2 = totalCO2 / totalLogged;
+
+  return {
+    totalLogged,
+    mostLoggedCategory,
+    avgCO2PerActivity: `${avgCO2.toFixed(2)} kg`,
+  };
 }

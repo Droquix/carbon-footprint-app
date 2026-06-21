@@ -1,5 +1,6 @@
 import { HISTORY_MAX_HEIGHT } from "../constants/uiConstants";
 import {
+  calculateQuickStats,
   getActivityTypeLabel,
   getCategoryAndEmissions,
   getImpactPill,
@@ -7,6 +8,7 @@ import {
 } from "../lib/displayUtils";
 import type { HistoryListProps } from "../types";
 import { HistoryEntry } from "./HistoryEntry";
+import { QuickStats } from "./QuickStats";
 
 /**
  * HistoryList component that displays the timeline of logged activities.
@@ -14,6 +16,7 @@ import { HistoryEntry } from "./HistoryEntry";
 // prettier-ignore
 export function HistoryList({ activities, onClearActivities }: HistoryListProps) {
   const sorted = [...activities].sort((activityA, activityB) => activityB.timestamp - activityA.timestamp);
+  const stats = calculateQuickStats(activities);
   return (
     <section className="bg-slate-900/40 backdrop-blur-xl border border-emerald-900/10 rounded-3xl p-6 shadow-2xl transition-all duration-300 hover:border-emerald-500/20 flex flex-col justify-between h-full">
       <div>
@@ -23,6 +26,7 @@ export function HistoryList({ activities, onClearActivities }: HistoryListProps)
             <button onClick={onClearActivities} aria-label="Clear all activity history" className="text-xs font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/15 border border-rose-500/20 px-3 py-1.5 rounded-xl transition-all duration-200 min-h-[32px] focus:outline-none focus:ring-2 focus:ring-rose-500/40">Clear All</button>
           )}
         </div>
+        <QuickStats stats={stats} />
         {sorted.length === 0 ? (
           <div className="text-center py-10 border border-dashed border-slate-800 rounded-2xl">
             <span className="text-3xl block mb-2" role="img" aria-label="Empty Inbox">📭</span>
